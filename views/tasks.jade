@@ -1,0 +1,30 @@
+extends layout
+block content
+  form.form-inline(method='post',action='/', enctype='multipart/form-data')
+    .pull-right
+      a.btn.btn-info(href='/') 刷新
+    input.url.input-xxlarge(name='url',type='text',placeholder='url')
+    input.url.hide(name='bt',type='file',placeholder='.torrent')
+    button.btn.btn-primary(type='submit') 添加
+    label
+      input(name='bt',type='checkbox',accept='*/torrent',onclick='$(".url").toggle()')
+      | BT任务
+  table.table
+    tr
+      th 任务状态
+      th 取回状态
+      th 文件名
+      th 操作
+    for task in tasks.tasks
+      tr(class=task.status)
+        td=task.statusLabel
+        td
+          if retrieving && retrieving.task.id == task.id
+            .label.label-info 正在取回(#{retrieving.progress} 预计剩余时间：#{retrieving.time})
+          if error[task.id]
+            .label.label-error(title=error[task.id]) 错误
+        td=task.filename
+        td
+          .btn-toolbar(style='margin:0;')
+            .btn-group
+              a.btn-mini.btn.btn-danger(href='/tasks/#{task.id}?_method=delete') 删除
