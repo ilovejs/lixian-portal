@@ -109,11 +109,13 @@ queue.tasks =
     queue.push
       name: "登录"
       func: (cb)->
+        await exec "#{cli} login #{username} #{password}", defer e, out, err
+        if e
+          stats.requireLogin = true
+          return cb e
         await exec "#{cli} config username #{username}", defer e, out, err
         return cb e if e
         await exec "#{cli} config password #{password}", defer e, out, err
-        return cb e if e
-        await exec "#{cli} login", defer e, out, err
         return cb e if e
         queue.tasks.updateTasklist()
         cb null
