@@ -2,7 +2,7 @@ extends layout
 block content
   form.form-inline(method='post',action='/', enctype='multipart/form-data')
     .pull-right
-      a.btn.btn-info(href='/') 刷新
+      a.btn.btn-info(href='/refresh') 刷新
     input.url.input-xxlarge(name='url',type='text',placeholder='url')
     input.url.hide(name='bt',type='file',placeholder='.torrent')
     button.btn.btn-primary(type='submit') 添加
@@ -15,16 +15,33 @@ block content
       th 取回状态
       th 文件名
       th 操作
-    for task in tasks.tasks
+    for task in info.stats.tasks
       tr(class=task.status)
         td=task.statusLabel
         td
-          if retrieving && retrieving.task.id == task.id
-            .label.label-info 正在取回(#{retrieving.progress} 预计剩余时间：#{retrieving.time})
-          if error[task.id]
-            .label.label-error(title=error[task.id]) 错误
+          if info.stats.retrieving && info.stats.retrieving.task.id == task.id
+            .label.label-info 正在取回(#{info.stats.progress} 预计剩余时间：#{info.stats.time})
+          if info.stats.error[task.id]
+            .label.label-error(title=info.stats.error[task.id]) 错误
         td=task.filename
         td
           .btn-toolbar(style='margin:0;')
             .btn-group
               a.btn-mini.btn.btn-danger(href='/tasks/#{task.id}?_method=delete') 删除
+  #accordion2.accordion
+    .accordion-group
+      .accordion-heading
+        a.accordion-toggle(data-toggle='collapse', data-parent='#accordion2', href='#collapseOne')
+          | 任务队列
+      #collapseOne.accordion-body.collapse.in
+        .accordion-inner
+          ul
+            for item in info.queue
+              li=item.name
+    .accordion-group
+      .accordion-heading
+        a.accordion-toggle(data-toggle='collapse', data-parent='#accordion2', href='#collapseTwo')
+          | 任务日志
+      #collapseTwo.accordion-body.collapse
+        .accordion-inner
+          pre=info.log.join('\n')
