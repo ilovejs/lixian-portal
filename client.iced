@@ -131,7 +131,7 @@ queue.tasks =
     queue.push
       name: "添加任务 #{url}"
       func: (cb)->
-        await exec "#{cli} add #{url}", defer e, out, err
+        await exec "#{cli} add \"#{url}\"", defer e, out, err
         return cb e if e
         queue.tasks.updateTasklist()
         cb null
