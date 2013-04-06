@@ -27,7 +27,13 @@ app.get '/', (req, res, n)->
   return res.redirect '/login' if client.stats.requireLogin
   res.render 'tasks'
 
-app.get '/refresh', (req, res, n)->
+app.all '*', (req, res, n)->
+  return n null if req.method is 'GET'
+  ip = req.header('x-forwarded-for') || req.connection.remoteAddress
+  ip = ip.split(',')[0].trim()
+  return n 403 if process.env.ONLYFROM && -1 == process.env.ONLYFROM.indexOf ip
+  n null
+app.post '/refresh', (req, res, n)->
   client.queue.tasks.updateTasklist()
   res.redirect 'back'
 

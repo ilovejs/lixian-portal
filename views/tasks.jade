@@ -2,7 +2,7 @@ extends layout
 block content
   form.form-inline(method='post',action='/', enctype='multipart/form-data')
     .pull-right
-      a.btn.btn-info(href='/refresh') 刷新
+      a.btn.btn-info(href='/refresh?_method=post') 刷新
     input.url.input-xxlarge(name='url',type='text',placeholder='url')
     input.url.hide(name='bt',type='file',placeholder='.torrent')
     button.btn.btn-primary(type='submit') 添加

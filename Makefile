@@ -6,6 +6,7 @@ components: node_modules component.json
 	touch $@
 node_modules: package.json
 	npm install
+	npm install bower
 	touch $@
 
 clean:
