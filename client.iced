@@ -35,6 +35,9 @@ exports.stats = stats =
 exports.queue = queue = []
 exports.log = log = []
 
+queue.append = (task)->
+  @push task unless (@filter (t)->t.name==task.name).length
+
 exports.startCron = ->
   while true
     if queue.length
@@ -51,7 +54,7 @@ exports.startCron = ->
 
 queue.tasks = 
   retrieve: (task)->
-    queue.push 
+    queue.append 
       name: "取回 #{task.id}"
       func: (cb)->
         stats.retrieving = spawn cli, ['download', '--continue', '--no-hash', '--delete', task.id], stdio: 'pipe'
@@ -72,7 +75,7 @@ queue.tasks =
         cb()
           
   updateTasklist: ->
-    queue.push
+    queue.append
       name: '刷新任务列表'
       func: (cb)->
         await exec "#{cli} list --no-colors", defer e, out, err
@@ -97,7 +100,7 @@ queue.tasks =
             queue.tasks.retrieve task
         cb()
   deleteTask: (id)->
-    queue.push
+    queue.append
       name: "删除任务 #{id}"
       func: (cb)->
         await exec "#{cli} delete #{id}", defer e, out, err
@@ -106,7 +109,7 @@ queue.tasks =
         cb null
 
   login: (username, password)->
-    queue.push
+    queue.append
       name: "登录"
       func: (cb)->
         await exec "#{cli} login #{username} #{password}", defer e, out, err
@@ -120,7 +123,7 @@ queue.tasks =
         queue.tasks.updateTasklist()
         cb null
   addBtTask: (filename, torrent)->
-    queue.push
+    queue.append
       name: "添加bt任务 #{filename}"
       func: (cb)->
         await exec "#{cli} add #{torrent}", defer e, out, err
@@ -128,7 +131,7 @@ queue.tasks =
         queue.tasks.updateTasklist()
         cb null
   addTask: (url)->
-    queue.push
+    queue.append
       name: "添加任务 #{url}"
       func: (cb)->
         await exec "#{cli} add \"#{url}\"", defer e, out, err
