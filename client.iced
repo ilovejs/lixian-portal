@@ -37,6 +37,8 @@ exports.log = log = []
 
 queue.append = (task)->
   @push task unless (@filter (t)->t.name==task.name).length
+queue.prepend = (task)->
+  @unshift task unless (@filter (t)->t.name==task.name).length
 
 exports.startCron = ->
   while true
@@ -75,7 +77,7 @@ queue.tasks =
         cb()
           
   updateTasklist: ->
-    queue.append
+    queue.prepend
       name: '刷新任务列表'
       func: (cb)->
         await exec "#{cli} list --no-colors", defer e, out, err
