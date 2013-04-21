@@ -26,6 +26,7 @@ regexMG = /^([^ ]+) +(.+) +(completed|downloading|waiting|failed) *(http\:\/\/.+
 regexQ = /^([^ ]+) +(.+) +(completed|downloading|waiting|failed) *(http\:\/\/.+)?$/m
 
 exports.stats = stats = 
+  task: null
   retrieving: null
   error: {}
   speed: 'NaN'
@@ -43,11 +44,10 @@ queue.prepend = (task)->
 exports.startCron = ->
   while true
     if queue.length
-      item = queue[0]
+      stats.task = queue.shift()
       log.unshift  "#{item.name} 启动"
-      await item.func defer e
+      await stats.task.func defer e
       log.unshift "#{item.name} 完成"
-      queue.shift()
       if e
         log.unshift e.message
         console.error e.message
