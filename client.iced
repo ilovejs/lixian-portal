@@ -59,7 +59,7 @@ queue.tasks =
     queue.append 
       name: "取回 #{task.id}"
       func: (cb)->
-        stats.retrieving = spawn cli, ['download', '--continue', '--no-hash', '--delete', task.id], stdio: 'pipe'
+        stats.retrieving = spawn cli, ['download', '--continue', '--no-hash', task.id], stdio: 'pipe'
         errBuffer = []
         stats.retrieving.task = task
         new lazy(stats.retrieving.stderr).lines.forEach (line)->
@@ -74,6 +74,7 @@ queue.tasks =
           stats.error[task.id] = errBuffer.join ''
         stats.retrieving = null
         queue.tasks.updateTasklist()
+        queue.tasks.deleteTask(task.id)
         cb()
           
   updateTasklist: ->
@@ -102,7 +103,7 @@ queue.tasks =
             queue.tasks.retrieve task
         cb()
   deleteTask: (id)->
-    queue.append
+    queue.prepend
       name: "删除任务 #{id}"
       func: (cb)->
         await exec "#{cli} delete #{id}", defer e, out, err
