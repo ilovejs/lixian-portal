@@ -6,7 +6,7 @@ client = require './client'
 
 app = express favicon: false
 app.locals.info = client = require './client'
-app.use express.static path.join __dirname, 'components'
+app.use express.static path.join __dirname, 'public'
 app.locals.pretty = true
 app.set 'view engine', 'jade'
 app.set 'views', path.join __dirname, 'views'
