@@ -2,6 +2,7 @@
 path = require 'path'
 fs = require 'fs'
 lazy = require 'lazy'
+
 cli = path.join __dirname, 'xunlei-lixian', 'lixian_cli.py'
 
 
@@ -45,9 +46,9 @@ exports.startCron = ->
   while true
     if queue.length
       stats.task = queue.shift()
-      log.unshift  "#{item.name} 启动"
+      log.unshift  "#{stats.task.name} 启动"
       await stats.task.func defer e
-      log.unshift "#{item.name} 完成"
+      log.unshift "#{stats.task.name} 完成"
       if e
         log.unshift e.message
         console.error e.message
@@ -59,7 +60,7 @@ queue.tasks =
     queue.append 
       name: "取回 #{task.id}"
       func: (cb)->
-        stats.retrieving = spawn cli, ['download', '--continue', '--no-hash', task.id], stdio: 'pipe'
+        stats.retrieving = spawn '/usr/bin/env', ['python2', cli, 'download', '--continue', '--no-hash', task.id], stdio: 'pipe'
         errBuffer = []
         stats.retrieving.task = task
         new lazy(stats.retrieving.stderr).lines.forEach (line)->
@@ -81,7 +82,7 @@ queue.tasks =
     queue.prepend
       name: '刷新任务列表'
       func: (cb)->
-        await exec "#{cli} list --no-colors", defer e, out, err
+        await exec "/usr/bin/env python2 #{cli} list --no-colors", defer e, out, err
         if e && err.match /user is not logged in/
           stats.requireLogin = true
           return cb e
@@ -106,7 +107,7 @@ queue.tasks =
     queue.prepend
       name: "删除任务 #{id}"
       func: (cb)->
-        await exec "#{cli} delete #{id}", defer e, out, err
+        await exec "/usr/bin/env python2 #{cli} delete #{id}", defer e, out, err
         return cb e if e
         queue.tasks.updateTasklist()
         cb null
@@ -115,13 +116,13 @@ queue.tasks =
     queue.append
       name: "登录"
       func: (cb)->
-        await exec "#{cli} login #{username} #{password}", defer e, out, err
+        await exec "/usr/bin/env python2 #{cli} login #{username} #{password}", defer e, out, err
         if e
           stats.requireLogin = true
           return cb e
-        await exec "#{cli} config username #{username}", defer e, out, err
+        await exec "/usr/bin/env python2 #{cli} config username #{username}", defer e, out, err
         return cb e if e
-        await exec "#{cli} config password #{password}", defer e, out, err
+        await exec "/usr/bin/env python2 #{cli} config password #{password}", defer e, out, err
         return cb e if e
         queue.tasks.updateTasklist()
         cb null
@@ -129,7 +130,7 @@ queue.tasks =
     queue.append
       name: "添加bt任务 #{filename}"
       func: (cb)->
-        await exec "#{cli} add #{torrent}", defer e, out, err
+        await exec "/usr/bin/env python2 #{cli} add #{torrent}", defer e, out, err
         return cb e if e
         queue.tasks.updateTasklist()
         cb null
@@ -137,7 +138,7 @@ queue.tasks =
     queue.append
       name: "添加任务 #{url}"
       func: (cb)->
-        await exec "#{cli} add \"#{url}\"", defer e, out, err
+        await exec "/usr/bin/env python2 #{cli} add \"#{url}\"", defer e, out, err
         return cb e if e
         queue.tasks.updateTasklist()
         cb null
