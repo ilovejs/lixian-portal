@@ -1,7 +1,7 @@
 lixian-portal
 =============
 
-给`iambus/xunlei-lixian`做的一个简洁实用的gui。
+给`iambus/xunlei-lixian`做的一个简洁实用的gui。（不明真相的同学赶快先去膜拜了[iambus/xunlei-lixian](https://github.com/iambus/xunlei-lixian)了再回来）
 
 # 这是啥
 
