@@ -1,25 +1,24 @@
 all: public node_modules
 
-public: components
+public: bower_components
 	mkdir -p $@/css
-	cp components/jquery/jquery.min.js $@
-	cp components/bootswatch/js/bootstrap.min.js $@
-	cp components/bootswatch/js/bootswatch.js $@
+	cp $^/jquery/jquery.min.js $@
+	cp $^/bootswatch/js/bootstrap.min.js $@
+	cp $^/bootswatch/js/bootswatch.js $@
 
-	cp components/bootswatch/simplex/bootstrap.min.css $@/css
-	cp components/bootswatch/default/bootstrap-responsive.min.css $@/css
+	cp $^/bootswatch/simplex/bootstrap.min.css $@/css
+	cp $^/bootswatch/default/bootstrap-responsive.min.css $@/css
 
-	cp -R components/bootswatch/img $@
+	cp -R $^/bootswatch/img $@
 
 	touch $@
 
-components: node_modules component.json
+bower_components: node_modules component.json
 	node_modules/bower/bin/bower install
 	touch $@
 node_modules: package.json
 	npm install
-	npm install bower
 	touch $@
 
 clean:
-	rm -Rf components node_modules public
+	rm -Rf bower_components node_modules public
