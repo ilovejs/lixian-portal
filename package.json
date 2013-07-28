@@ -1,9 +1,9 @@
 {
   "name": "lixian-portal",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "lixian-portal =============",
   "dependencies": {
-    "iced-coffee-script": "~1.4.0c",
+    "iced-coffee-script": ">1.4.0",
     "express": "~3.1.0",
     "jade": "~0.28.2",
     "lazy": "~1.0.9"
