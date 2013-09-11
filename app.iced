@@ -6,7 +6,7 @@ client = require './client'
 
 app = express favicon: false
 app.locals.info = client = require './client'
-app.use express.static path.join __dirname, 'public'
+app.use express.static path.join __dirname, 'bower_components'
 app.locals.pretty = true
 app.set 'view engine', 'jade'
 app.set 'views', path.join __dirname, 'views'
@@ -25,6 +25,8 @@ autorefresh()
 
 app.get '/', (req, res, n)->
   return res.redirect '/login' if client.stats.requireLogin
+  while client.log.length > 100
+    client.log.pop()
   res.render 'tasks'
 
 app.all '*', (req, res, n)->
@@ -52,6 +54,10 @@ app.post '/login', (req, res, n)->
   client.stats.requireLogin = false
   client.queue.tasks.login req.body.username, req.body.password
   res.redirect '/'
+app.get '/logout', (req, res, n)-> 
+  client.stats.requireLogin = true
+  client.queue.tasks.logout()
+  res.redirect '/'
 
 app.delete '/tasks/:id', (req, res, n)->
   if client.stats.retrieving?.task.id
@@ -63,6 +69,8 @@ app.delete '/tasks/:id', (req, res, n)->
 app.use (e, req, res, next)->
   res.render 'error',
     error: e
+await client.init defer e
+throw e if e
 
 (server = http.createServer app).listen (Number process.env.PORT or 3000), ->
   console.log "portal ready on http://#{server.address().address}:#{server.address().port}/"

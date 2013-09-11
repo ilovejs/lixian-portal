@@ -1,11 +1,22 @@
 extends layout
 block content
-  form.form-inline(method='post',action='/', enctype='multipart/form-data')
+  form.form-inline(method='post',action='/', enctype='multipart/form-data',style='margin-bottom: 0.5em;')
     .pull-right
-      a.btn.btn-info(href='/') 刷新
-    input.url.input-xxlarge(name='url',type='text',placeholder='url')
-    input.url.hide(name='bt',type='file',placeholder='.torrent')
-    button.btn.btn-primary(type='submit') 添加
+      .btn-group
+        a.btn.btn-info(href='/') 
+          i.icon-refresh
+          |刷新
+        a.btn.btn-danger(href='/logout') 
+          i.icon-signout
+          |登出
+    .form-group.url
+      input.form-control.input-xxlarge(name='url',type='text',placeholder='url')
+    .form-group.url(style='display: none;')
+      input(name='bt',type='file',placeholder='.torrent')
+    .form-group
+      button.btn.btn-primary(type='submit') 
+        i.icon-plus
+        |添加
     label
       input(name='bt',type='checkbox',accept='*/torrent',onclick='$(".url").toggle()')
       | BT任务
@@ -28,20 +39,22 @@ block content
           .btn-toolbar(style='margin:0;')
             .btn-group
               a.btn-mini.btn.btn-danger(href='/tasks/#{task.id}?_method=delete') 删除
-  #accordion2.accordion
-    .accordion-group
-      .accordion-heading
-        a.accordion-toggle(data-toggle='collapse', data-parent='#accordion2', href='#collapseOne')
-          | 任务队列
-      #collapseOne.accordion-body.collapse.in
-        .accordion-inner
+  #accordion2.panel-group
+    .panel.panel-default
+      .panel-heading
+        .panel-title
+          a.accordion-toggle(data-toggle='collapse', data-parent='#accordion2', href='#collapseOne')
+            | 任务队列
+      #collapseOne.panel-body.collapse.in
+        .panel-inner
           ul
             for item in info.queue
               li=item.name
-    .accordion-group
-      .accordion-heading
-        a.accordion-toggle(data-toggle='collapse', data-parent='#accordion2', href='#collapseTwo')
-          | 任务日志
-      #collapseTwo.accordion-body.collapse
-        .accordion-inner
+    .panel.panel-default
+      .panel-heading
+        .panel-title
+          a.accordion-toggle(data-toggle='collapse', data-parent='#accordion2', href='#collapseTwo')
+            | 任务日志
+      #collapseTwo.panel-body.collapse
+        .panel-inner
           pre=info.log.join('\n')

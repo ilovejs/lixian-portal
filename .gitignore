@@ -10,8 +10,5 @@ lib-cov
 pids
 logs
 results
-
+Downloads
 npm-debug.log
-/bower_components
-/node_modules
-/public

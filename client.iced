@@ -4,6 +4,7 @@ fs = require 'fs'
 lazy = require 'lazy'
 
 cli = path.join __dirname, 'xunlei-lixian', 'lixian_cli.py'
+process.env.HOME = path.join __dirname, 'Downloads'
 
 
 {
@@ -55,12 +56,17 @@ exports.startCron = ->
 
     await setTimeout defer(), 100
 
+exports.init = (cb)->
+  await exec "mkdir -p Downloads", cwd: __dirname, defer e
+  return cb e if e 
+  cb null
+
 queue.tasks = 
   retrieve: (task)->
     queue.append 
       name: "取回 #{task.id}"
       func: (cb)->
-        stats.retrieving = spawn '/usr/bin/env', ['python2', cli, 'download', '--continue', '--no-hash', task.id], stdio: 'pipe'
+        stats.retrieving = spawn '/usr/bin/env', ['python2', cli, 'download', '--continue', '--no-hash', task.id], stdio: 'pipe', cwd: path.join __dirname, 'Downloads'
         errBuffer = []
         stats.retrieving.task = task
         new lazy(stats.retrieving.stderr).lines.forEach (line)->
@@ -77,7 +83,8 @@ queue.tasks =
         queue.tasks.updateTasklist()
         queue.tasks.deleteTask(task.id)
         cb()
-          
+  
+
   updateTasklist: ->
     queue.prepend
       name: '刷新任务列表'
@@ -126,6 +133,15 @@ queue.tasks =
         return cb e if e
         queue.tasks.updateTasklist()
         cb null
+        
+  logout: (username, password)->
+    queue.append
+      name: "登出"
+      func: (cb)->
+        await exec "rm -f Downloads/.xunlei.lixian.cookies", cwd: __dirname, defer e, out, err
+        queue.tasks.updateTasklist()
+        cb null
+
   addBtTask: (filename, torrent)->
     queue.append
       name: "添加bt任务 #{filename}"

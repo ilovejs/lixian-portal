@@ -28,18 +28,11 @@ lixian-portal
 
 # 安装方法
 
-## 安装
+* 下载安装包并解压缩
+* 运行命令启动`node /path/to/lixian-portal` 
+* 下载的位置为`/path/to/lixian-portal/Downloads`
 
-```bash
-sudo npm install lixian-portal -g
-```
+# Tricks
 
-## 设置daemon
-
-* 每个系统的daemon管理器不一样，所以……（此处省略好多字）
-* 首先通过命令`which lixian-portal`看一看安装后的具体路径是啥
-* 然后该路径就是启动的脚本了
-* 下载的位置为当前目录（current working directory），所以daemonize时注意调整
-* 必须要有HOME变量，（给iambus/xunlei-lixian存放偏好文件）
-
-
+* 如果想让它一直在后运行，可以使用这个命令启动`nohup node /path/to/lixian-portal`
+* `lixian-portal`兼容`xunlei-lixian`的设置，按这样的命令格式设置即可`HOME=/path/to/lixian-portal/Downloads lx config output-dir /mnt/Downloads`
