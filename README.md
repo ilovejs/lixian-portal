@@ -34,5 +34,5 @@ lixian-portal
 
 # Tricks
 
-* 如果想让它一直在后运行，可以使用这个命令启动`nohup node /path/to/lixian-portal`
+* 如果想让它一直在后运行，可以使用这个命令启动`nohup node /path/to/lixian-portal &`
 * `lixian-portal`兼容`xunlei-lixian`的设置，按这样的命令格式设置即可`HOME=/path/to/lixian-portal/Downloads lx config output-dir /mnt/Downloads`
